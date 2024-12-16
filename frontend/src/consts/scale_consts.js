@@ -1,0 +1,4 @@
+export const CONTENT_SCALE = {
+    CONTENT_WIDTH: 1280,
+    CONTENT_HEIGHT: 1024
+}
