@@ -80,14 +80,14 @@ export function SearchBar() {
         //     isChecked: false
         // }))
     ]);
-    const [checked, setChecked] = useState([true, false]);
+    const [checkedParent, setCheckedParent] = useState(false);
 
-    const handleChange1 = (event) => {
-        setChecked([event.target.checked, event.target.checked]);
+    const handleChangeParent = (e) => {
+        setCheckedParent([e.target.checked, e.target.checked]);
         setCheckedList(prevList => 
             prevList.map(item => ({
                 ...item,
-                isChecked: event.target.checked
+                isChecked: e.target.checked
             }))
         );
     };
@@ -99,8 +99,6 @@ export function SearchBar() {
                 check.id === index ? {...check, isChecked: e.target.checked} : check
             )
         );
-        console.log(checkedList)
-        console.log(e.target.checked)
     };
 
     useEffect(() => {
@@ -115,7 +113,6 @@ export function SearchBar() {
                     <FormControlLabel
                         key={member.id}
                         label={member.name}
-                        // control={<Checkbox checked={checkedList[{index}]} onChange={(e) => console.log(e,member, index)} />}
                         control={
                             <Checkbox 
                                 checked={checkedList[index].isChecked} 
@@ -140,7 +137,6 @@ export function SearchBar() {
             />
         </Search>
         <Accordion 
-        defaultExpanded 
         square 
         >
             <AccordionSummary
@@ -153,12 +149,12 @@ export function SearchBar() {
             <Divider />
             <AccordionDetails>
             <FormControlLabel
-                label="Parent"
+                label="全メンバー"
                 control={
                     <Checkbox
-                        checked={checked[0] && checked[1]}
-                        indeterminate={checked[0] !== checked[1]}
-                        onChange={handleChange1}
+                        checked={checkedParent}
+                        indeterminate={checkedParent !== checkedList.find((check) => check === false)}
+                        onChange={(e) => handleChangeParent(e)}
                     />
                 }
             />

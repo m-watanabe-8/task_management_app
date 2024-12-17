@@ -21,7 +21,7 @@ const TaskSearch = () => {
             height: '100vh',
             display: 'flex',
             flexDirection: 'column',
-            overflow: { xs: 'auto', lg: 'hidden' } 
+            overflow: { xs: 'auto', md: 'hidden' } 
         }}>
             <Header />
             <Box sx={{ width: '100%' }}>
@@ -42,10 +42,10 @@ const TaskSearch = () => {
                     <Stack 
                     sx={{ 
                         // 画面サイズに応じて動作変更
-                        flexGrow: { xs: 'unset', lg: 1 },
+                        flexGrow: { xs: 'unset', md: 1 },
                         // 縦並び時の高さ調整
-                        minHeight: { xs: 'fit-content', lg: '100%' },
-                        flexDirection: { xs: 'column', lg: 'row' },
+                        minHeight: { xs: 'fit-content', md: '100%' },
+                        flexDirection: { xs: 'column', md: 'row' },
                         maxWidth: '100vw',  
                         overflowX: 'auto', 
                         gap: 2
@@ -57,10 +57,10 @@ const TaskSearch = () => {
                             key={value}
                             spacing={2}
                             sx={{ 
-                                height: { xs: 'auto', lg: '100%' },
-                                minWidth: { xs: 'auto', lg: '20vw' },
+                                height: { xs: 'auto', md: '100%' },
+                                minWidth: { xs: 'auto', md: '20vw' },
                                 flexShrink: 0,
-                                mb: { xs: 2, lg: 0 },
+                                mb: { xs: 2, md: 0 },
                                 p: 3,
                             }}>
                                 <Typography variant="h5" component="div">
