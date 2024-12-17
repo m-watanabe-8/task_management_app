@@ -1,5 +1,5 @@
 import { RegisterDialog } from "components/RegisterDialog";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import {
@@ -17,13 +17,17 @@ export function TaskCard({taskList}) {
     const [targetTask, setTargetTask] = useState({});
 
     const handleOpen = (task) => {
-        setTargetTask(task)
+        setTargetTask(task);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
     };
+
+    useEffect(() => {
+        console.log(taskList)
+    },[])
 
     return (
         <>

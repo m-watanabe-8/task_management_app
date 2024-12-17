@@ -1,7 +1,7 @@
 import { Header } from "components/Header";
 import { RegisterDialog } from "components/RegisterDialog";
 import { TaskAccordion } from "components/TaskAccordion";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Typography } from '@mui/material';
@@ -9,22 +9,20 @@ import Grid from '@mui/material/Grid2';
 
 
 const Home = () => {
-    const task1List = [
-        {id:"1",name: "タスク名1", content: "タスクの内容" ,category: "カテゴリ1",start_date: "2024/12/11",end_date: "2024/12/13"},
-        {id:"2",name: "タスク名2", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13"},
-        {id:"3",name: "タスク名2", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13"},
+    const allTaskList = [
+        {id:"1",name: "進行中1", content: "タスクの内容" ,category: "カテゴリ1",start_date: "2024/12/11",end_date: "2024/12/13",status:"doing", isDone:0},
+        {id:"2",name: "進行中2", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13",status:"doing", isDone:0},
+        {id:"3",name: "未着手3", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13",status:"todo", isDone:0},
+        {id:"4",name: "未着手4", content: "タスクの内容",category: "カテゴリ3",start_date: "2024/12/11",end_date: "2024/12/13",status:"todo", isDone:0},
+        {id:"5",name: "未定1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024/12/11",end_date: "2024/12/13",status:"undecided", isDone:0},
+        {id:"6",name: "完了1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024/12/11",end_date: "2024/12/13",status:"undecided", isDone:1},
     ]
-    const task2List = [
-        {id:"5",name: "タスク名3", content: "タスクの内容",category: "カテゴリ3",start_date: "2024/12/11",end_date: "2024/12/13"},
-        {id:"6",name: "タスク名4", content: "タスクの内容",category: "カテゴリ4",start_date: "2024/12/11",end_date: "2024/12/13"},
-    ]
-    const endList = [
-        {id:"7",name: "タスク名5", content: "タスクの内容",category: "カテゴリ5",start_date: "2024/12/11",end_date: "2024/12/12"},
-        {id:"8",name: "タスク名6", content: "タスクの内容",category: "カテゴリ6",start_date: "2024/12/11",end_date: "2024/12/12"},
-        {id:"9",name: "タスク名6", content: "タスクの内容",category: "カテゴリ6",start_date: "2024/12/11",end_date: "2024/12/12"},
-        {id:"10",name: "タスク名6", content: "タスクの内容",category: "カテゴリ6",start_date: "2024/12/11",end_date: "2024/12/12"},
-        {id:"11",name: "タスク名6", content: "タスクの内容",category: "カテゴリ6",start_date: "2024/12/11",end_date: "2024/12/12"},
-    ]
+
+    const doneTaskList = []
+    const doingTaskList = []
+    const todoTaskList = []
+    const undecidedTaskList = []
+    let isLoding = false
 
     const [open, setOpen] = useState(false);
     const [targetTask, setTargetTask] = useState({});
@@ -37,6 +35,27 @@ const Home = () => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    useEffect(() => {
+        if(isLoding === true){
+            return
+        }
+        allTaskList.forEach((task) => {
+            if(task.isDone === 1){
+                doneTaskList.push(task)
+            }
+            else if(task.status === "doing"){
+                doingTaskList.push(task)
+            }
+            else if(task.status === "todo"){
+                todoTaskList.push(task)
+            }
+            else{
+                undecidedTaskList.push(task)
+            }
+        })
+        isLoding = true
+    },[])
 
     return (
         <>
@@ -64,10 +83,9 @@ const Home = () => {
             >
                 {/* 今日のタスク */}
                 <Grid item 
-                xs={12} 
-                md={6} 
+                size={{ xs: 12, md: 6 }}
                 sx={{ 
-                    height: { xs: 'auto', md: '100%' },
+                    height: { xs: 'auto', md: 'calc(100% - 64px)' },
                     overflow: 'hidden',
                     mb: { xs: 2, md: 0 }
                 }}>
@@ -81,22 +99,25 @@ const Home = () => {
                             p: 3,
                         }}
                     >
-                        <Grid item size={10} sx={{ mb: 2 }}>
-                            <Typography variant="h5" component="div">
-                                今日のタスク
-                            </Typography>
-                        </Grid>
-                        <Grid item size={2} sx={{ mb: 2 }}>
-                            <Button variant="contained" sx={{backgroundColor: "#05a7be"}} onClick={() => handleOpen({})}>
-                                <AddIcon fontSize='medium'/>
-                                新規作成
-                            </Button>
-                            <RegisterDialog 
-                                open={open} 
-                                handleClose={handleClose} 
-                                task={targetTask}
-                            />
-                        </Grid>
+                            <Grid item size={5} sx={{ mb: 2 }}>
+                                <Typography variant="h5" component="div">
+                                    今日のタスク
+                                </Typography>
+                            </Grid>
+                            <Grid item
+                            size={7} 
+                            sx={{ mb: 2 }}
+                            >
+                                <Button variant="contained" sx={{backgroundColor: "#05a7be"}} onClick={() => handleOpen({})}>
+                                    <AddIcon fontSize='medium'/>
+                                    新規作成
+                                </Button>
+                                <RegisterDialog 
+                                    open={open} 
+                                    handleClose={handleClose} 
+                                    task={targetTask}
+                                />
+                            </Grid>
                         {/* ステータスごと */}
                         <Grid item 
                         size={7} 
@@ -105,29 +126,19 @@ const Home = () => {
                             overflowY: 'auto',  
                         }}>
                             <TaskAccordion 
-                                taskList={task1List}
+                                taskList={doingTaskList}
                                 statusName={"進行中"}
                                 colorCode={"#1ed7cd"}
                             />
                             <TaskAccordion 
-                                taskList={task1List}
-                                statusName={"進行中"}
-                                colorCode={"#18c4b8"}
-                            />
-                            <TaskAccordion 
-                                taskList={task1List}
-                                statusName={"進行中"}
+                                taskList={todoTaskList}
+                                statusName={"未着手"}
                                 colorCode={"#05a7be"}
                             />
                             <TaskAccordion 
-                                taskList={task2List}
-                                statusName={"未着手"}
+                                taskList={undecidedTaskList}
+                                statusName={"未定"}
                                 colorCode={"#087ea2"}
-                            />
-                            <TaskAccordion 
-                                taskList={task1List}
-                                statusName={"進行中"}
-                                colorCode={"#005873"}
                             />
                         </Grid>
                         {/* 完了 */}
@@ -138,7 +149,7 @@ const Home = () => {
                             overflowY: 'auto',  
                         }}>
                             <TaskAccordion 
-                                taskList={endList}
+                                taskList={doneTaskList}
                                 statusName={"完了"}
                                 colorCode={"#8c9cb2"}
                             />
@@ -147,8 +158,7 @@ const Home = () => {
                 </Grid>
                 {/* 明日以降のタスク */}
                 <Grid item 
-                    xs={12}
-                    md={6} 
+                    size={{ xs: 12, md: 6 }}
                     sx={{ 
                         height: { xs: 'auto', md: '100%' },
                         overflow: 'hidden'
@@ -178,16 +188,16 @@ const Home = () => {
                             <Typography variant="h7" component="div">
                                 2024/12/15開始
                             </Typography>
-                            <TaskAccordion 
-                                taskList={task1List}
+                            {/* <TaskAccordion 
+                                taskList={allTaskList}
                                 statusName={"進行中"}
                                 colorCode={"#1ed7cd"}
                             />
                             <TaskAccordion 
-                                taskList={task2List}
+                                taskList={allTaskList}
                                 statusName={"未着手"}
                                 colorCode={"#18c4b8"}
-                            />
+                            /> */}
                         </Grid>
                         <Grid item 
                         size={6}
@@ -198,16 +208,16 @@ const Home = () => {
                             <Typography variant="h7" component="div">
                                 2024/12/16開始
                             </Typography>
-                            <TaskAccordion 
-                                taskList={task1List}
+                            {/* <TaskAccordion 
+                                taskList={allTaskList}
                                 statusName={"進行中"}
                                 colorCode={"#1ed7cd"}
                             />
                             <TaskAccordion 
-                                taskList={task2List}
+                                taskList={allTaskList}
                                 statusName={"未着手"}
                                 colorCode={"#18c4b8"}
-                            />
+                            /> */}
                         </Grid>
                     </Grid>
                 </Grid>

@@ -28,6 +28,7 @@ export function RegisterDialog({open, handleClose, task}) {
     }
 
     const categories = ["カテゴリ1", "カテゴリ2", "カテゴリ3"]
+    const statusList = ["未着手", "進行中", "完了", "未定"]
     const start_date = convertDateFormat(task.start_date)
     const end_date = convertDateFormat(task.end_date)
 
@@ -93,7 +94,7 @@ export function RegisterDialog({open, handleClose, task}) {
                     <Select
                     defaultValue={task.category}
                     label="カテゴリ"
-                    {...register('category', { required: 'カテゴリは必須です' })}
+                    {...register('category')}
                     >
                         {categories.map((category, index) => (
                             <MenuItem key={index} value={category}>
@@ -102,6 +103,21 @@ export function RegisterDialog({open, handleClose, task}) {
                         ))}
                     </Select>
                     {errors.category && <p style={{ color: 'red' }}>{errors.category.message}</p>}
+                </FormControl>
+                <FormControl fullWidth margin="normal">
+                    <InputLabel>ステータス</InputLabel>
+                    <Select
+                    defaultValue={task.status}
+                    label="カテゴリ"
+                    {...register('status', { required: 'ステータスは必須です' })}
+                    >
+                        {statusList.map((status, index) => (
+                            <MenuItem key={index} value={status}>
+                                {status}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
                 </FormControl>
             </form>
             </DialogContent>
