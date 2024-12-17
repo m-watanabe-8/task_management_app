@@ -30,7 +30,7 @@ export function TaskCard({taskList}) {
         <>
             {taskList.length > 0 && taskList.map((task,index) => {
                 return(
-                    <Card variant="outlined" key={index}>
+                    <Card variant="outlined" key={task.id} sx={{ mb: 1 }}>
                         <CardHeader
                             action={
                                 <IconButton aria-label="settings" onClick={() => handleOpen(task)}>

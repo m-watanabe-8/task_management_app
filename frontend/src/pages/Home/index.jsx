@@ -10,18 +10,18 @@ import Grid from '@mui/material/Grid2';
 
 const Home = () => {
     const allTaskList = [
-        {id:"1",name: "進行中1", content: "タスクの内容" ,category: "カテゴリ1",start_date: "2024/12/11",end_date: "2024/12/13",status:"doing", isDone:0},
-        {id:"2",name: "進行中2", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13",status:"doing", isDone:0},
-        {id:"3",name: "未着手3", content: "タスクの内容",category: "カテゴリ2",start_date: "2024/12/12",end_date: "2024/12/13",status:"todo", isDone:0},
-        {id:"4",name: "未着手4", content: "タスクの内容",category: "カテゴリ3",start_date: "2024/12/11",end_date: "2024/12/13",status:"todo", isDone:0},
-        {id:"5",name: "未定1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024/12/11",end_date: "2024/12/13",status:"undecided", isDone:0},
-        {id:"6",name: "完了1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024/12/11",end_date: "2024/12/13",status:"undecided", isDone:1},
+        {id:"1",name: "進行中1", content: "タスクの内容" ,category: "カテゴリ1",start_date: "2024-12-30T09:56:00+09:00",end_date: "2024-12-30T09:56:00+09:00",status:"doing", isDone:0},
+        {id:"2",name: "進行中2", content: "タスクの内容",category: "カテゴリ2",start_date: "2024-12-30T09:56:00+09:00",end_date: "2024-12-30T09:56:00+09:00",status:"doing", isDone:0},
+        {id:"3",name: "未着手3", content: "タスクの内容",category: "カテゴリ2",start_date: "2024-12-30T09:56:00+09:00",end_date: "2024-12-30T09:56:00+09:00",status:"todo", isDone:0},
+        {id:"4",name: "未着手4", content: "タスクの内容",category: "カテゴリ3",start_date: "2024-12-17T09:54:00+09:00",end_date: "2024-12-17T09:54:00+09:00",status:"todo", isDone:0},
+        {id:"5",name: "未定1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024-12-17T09:54:00+09:00",end_date: "2024-12-17T09:54:00+09:00",status:"undecided", isDone:0},
+        {id:"6",name: "完了1", content: "タスクの内容",category: "カテゴリ4",start_date: "2024-12-17T09:54:00+09:00",end_date: "2024-12-17T09:54:00+09:00",status:"undecided", isDone:1},
     ]
 
-    const doneTaskList = []
-    const doingTaskList = []
-    const todoTaskList = []
-    const undecidedTaskList = []
+    const [doneTaskList, setDoneTaskList] = useState([]);
+    const [doingTaskList, setDoingTaskList] = useState([]);
+    const [todoTaskList, setTodoTaskList] = useState([]);
+    const [undecidedTaskList, setUndecidedTaskList] = useState([]);
     let isLoding = false
 
     const [open, setOpen] = useState(false);
@@ -40,20 +40,33 @@ const Home = () => {
         if(isLoding === true){
             return
         }
+
+        // 一時的な配列を作成
+        const done = [];
+        const doing = [];
+        const todo = [];
+        const undecided = [];
+
         allTaskList.forEach((task) => {
             if(task.isDone === 1){
-                doneTaskList.push(task)
+                done.push(task);
             }
             else if(task.status === "doing"){
-                doingTaskList.push(task)
+                doing.push(task);
             }
             else if(task.status === "todo"){
-                todoTaskList.push(task)
+                todo.push(task);
             }
             else{
-                undecidedTaskList.push(task)
+                undecided.push(task);
             }
         })
+
+        setDoneTaskList(done);
+        setDoingTaskList(doing);
+        setTodoTaskList(todo);
+        setUndecidedTaskList(undecided);
+
         isLoding = true
     },[])
 
