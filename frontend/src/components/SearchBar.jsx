@@ -80,10 +80,13 @@ export function SearchBar() {
         //     isChecked: false
         // }))
     ]);
-    const [checkedParent, setCheckedParent] = useState(false);
+
+    // 親チェックボックスの状態管理
+    const [parentChecked, setParentChecked] = useState(false);
+    const [isIndeterminate, setIsIndeterminate] = useState(false);
 
     const handleChangeParent = (e) => {
-        setCheckedParent([e.target.checked, e.target.checked]);
+        setParentChecked(e.target.checked);
         setCheckedList(prevList => 
             prevList.map(item => ({
                 ...item,
@@ -101,9 +104,25 @@ export function SearchBar() {
         );
     };
 
+    // 子チェックボックスの状態が変更されたときに親の状態を更新
     useEffect(() => {
+        const checkedCount = checkedList.filter(item => item.isChecked).length;
+        const totalCount = checkedList.length;
 
-    }, [])
+        if (checkedCount === 0) {
+            // チェックなし
+            setParentChecked(false);
+            setIsIndeterminate(false);
+        } else if (checkedCount === totalCount) {
+            // 全てチェック
+            setParentChecked(true);
+            setIsIndeterminate(false);
+        } else {
+            // 一部チェック
+            setParentChecked(false);
+            setIsIndeterminate(true);
+        }
+    }, [checkedList]);
 
     // 絞り込み条件の子要素
     const children = (
@@ -152,9 +171,9 @@ export function SearchBar() {
                 label="全メンバー"
                 control={
                     <Checkbox
-                        checked={checkedParent}
-                        indeterminate={checkedParent !== checkedList.find((check) => check === false)}
-                        onChange={(e) => handleChangeParent(e)}
+                        checked={parentChecked}
+                        indeterminate={isIndeterminate}
+                        onChange={handleChangeParent}
                     />
                 }
             />
