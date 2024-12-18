@@ -2,11 +2,13 @@ import { useState } from "react";
 
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControl,
+    FormControlLabel,
     InputLabel,
     MenuItem,
     Select,
@@ -17,19 +19,20 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export function RegisterDialog({open, handleClose, task}) {
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm()
 
-    const [startDate, setStartDate] = useState(dayjs(task.start_date));
+    const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
-    const categories = ["カテゴリ1", "カテゴリ2", "カテゴリ3"]
+    const categories = ["work", "meeting", "go_out", "event", "other"]
 
     const onSubmit = (data) => {
         console.log({id:task.id, ...data});
@@ -49,7 +52,7 @@ export function RegisterDialog({open, handleClose, task}) {
                     <TextField
                         fullWidth
                         label="タイトル"
-                        defaultValue={task.name}
+                        defaultValue={task.title}
                         variant="outlined"
                         margin="normal"
                         {...register('title', { required: 'タイトルは必須です' })}
@@ -68,26 +71,49 @@ export function RegisterDialog({open, handleClose, task}) {
                         error={!!errors.content}
                         helperText={errors.content?.message}
                     />
-                    <DatePicker 
-                        fullWidth
-                        label="開始日"
-                        defaultValue={startDate}
-                        onChange={(newValue) => setStartDate(newValue)}
-                        variant="outlined"
-                        margin="normal"
-                        {...register('start_date', { required: '開始日は必須です' })}
-                        error={!!errors.start_date}
-                        helperText={errors.start_date?.message}
+                    <Controller
+                        name="start_date"
+                        control={control}
+                        defaultValue={dayjs(task.start_date)}
+                        rules={{ required: '開始日は必須です' }}
+                        render={({ field }) => (
+                            <DatePicker
+                                {...field}
+                                fullWidth
+                                label="開始日"
+                                onChange={(newValue) => {
+                                    field.onChange(newValue);
+                                    console.log(task);
+                                    setStartDate(newValue);
+                                }}
+                                variant="outlined"
+                                margin="normal"
+                                error={!!errors.start_date}
+                                helperText={errors.start_date?.message}
+                            />
+                        )}
                     />
-                    <DatePicker 
-                        fullWidth
-                        label="終了日"
-                        // defaultValue={task.end_date}
-                        variant="outlined"
-                        margin="normal"
-                        {...register('end_date', { required: '終了日は必須です' })}
-                        error={!!errors.end_date}
-                        helperText={errors.end_date?.message}
+                    <Controller
+                        name="end_date"
+                        control={control}
+                        defaultValue={dayjs(task.end_date)}
+                        rules={{ required: '終了日は必須です' }}
+                        render={({ field }) => (
+                            <DatePicker
+                                {...field}
+                                fullWidth
+                                label="終了日"
+                                onChange={(newValue) => {
+                                    field.onChange(newValue);
+                                    console.log(task);
+                                    setEndDate(newValue);
+                                }}
+                                variant="outlined"
+                                margin="normal"
+                                error={!!errors.end_date}
+                                helperText={errors.end_date?.message}
+                            />
+                        )}
                     />
                     <FormControl fullWidth margin="normal">
                         <InputLabel>カテゴリ</InputLabel>
@@ -108,7 +134,7 @@ export function RegisterDialog({open, handleClose, task}) {
                         <InputLabel>ステータス</InputLabel>
                         <Select
                         defaultValue={task.status}
-                        label="カテゴリ"
+                        label="ステータス"
                         {...register('status', { required: 'ステータスは必須です' })}
                         >
                             <MenuItem value='todo'>未着手</MenuItem>
@@ -117,6 +143,15 @@ export function RegisterDialog({open, handleClose, task}) {
                         </Select>
                         {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
                     </FormControl>
+                    <FormControl fullWidth margin="normal">
+                        <FormControlLabel 
+                        control={<Checkbox />} 
+                        checked= {task.is_done} 
+                        label="完了" 
+                        {...register('isDone')}/>
+                        {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
+                    </FormControl>
+                    
                 </form>
                 </DialogContent>
                 <DialogActions>

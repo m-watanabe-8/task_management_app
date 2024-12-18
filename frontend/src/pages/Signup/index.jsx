@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Header } from "../../components/Header";
+import { Header } from "../../components/Header/Header";
 
 import {
     Button,

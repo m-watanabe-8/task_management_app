@@ -146,7 +146,7 @@ export function SearchBar() {
 
     return(
         <>
-        <Search>
+        <Search sx={{ mb:1 }}>
             <SearchIconWrapper>
                 <SearchIcon />
             </SearchIconWrapper>
@@ -155,15 +155,13 @@ export function SearchBar() {
                 inputProps={{ 'aria-label': 'search' }}
             />
         </Search>
-        <Accordion 
-        square 
-        >
+        <Accordion square sx={{ ml:1, width: "40%" }}>
             <AccordionSummary
             expandIcon={<ExpandMoreRoundedIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
             >
-                <Typography sx={{ flexShrink: 0,  fontWeight: "bold"}}>絞り込み条件</Typography>
+                <Typography sx={{ flexShrink: 0 }}>フィルター</Typography>
             </AccordionSummary>
             <Divider />
             <AccordionDetails>
