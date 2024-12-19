@@ -7,7 +7,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 
 
-export function TaskAccordion({taskList, statusName}) {
+export function TaskAccordion({taskList, statusName, onTaskUpdate}) {
     // statusの値で背景色を変える
     const getStatusColor = (status) => {
         switch (status) {
@@ -44,6 +44,7 @@ export function TaskAccordion({taskList, statusName}) {
             <AccordionDetails>
                 <TaskCard 
                     taskList={taskList}
+                    onTaskUpdate={onTaskUpdate}
                 />
             </AccordionDetails>
         </Accordion>

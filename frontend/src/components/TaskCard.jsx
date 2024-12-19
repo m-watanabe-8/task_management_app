@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 
-export function TaskCard({taskList}) {
+export function TaskCard({taskList, onTaskUpdate}) {
     // categoryの値で背景色を変える
     const getCategoryColor = (category) => {
         switch (category) {
@@ -88,9 +88,10 @@ export function TaskCard({taskList}) {
                 )})
             }
             <RegisterDialog 
-            open={open} 
-            handleClose={handleClose} 
-            task={targetTask}
+                open={open} 
+                handleClose={handleClose} 
+                task={targetTask}
+                onTaskUpdate={onTaskUpdate}
             />
         </> 
     )

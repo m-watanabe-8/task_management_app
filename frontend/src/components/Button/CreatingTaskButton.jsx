@@ -5,12 +5,10 @@ import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 
 
-export function CreatingTaskButton() {
+export function CreatingTaskButton({ onTaskUpdate }) {
     const [open, setOpen] = useState(false);
-    const [targetTask, setTargetTask] = useState({});
 
-    const handleOpen = (task) => {
-        setTargetTask(task)
+    const handleOpen = () => {
         setOpen(true);
     };
 
@@ -31,7 +29,8 @@ export function CreatingTaskButton() {
         <RegisterDialog 
             open={open} 
             handleClose={handleClose} 
-            task={targetTask}
+            task={{}}
+            onTaskUpdate={onTaskUpdate}
         />
     </>
     )
