@@ -3,6 +3,8 @@ from django.db import models
 import uuid
 from django.core import validators
 from django.db.models import Q
+from user.models import User
+
 
 
 class Task(models.Model):
@@ -35,6 +37,7 @@ class Task(models.Model):
         default='todo'
     )
     is_done = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title

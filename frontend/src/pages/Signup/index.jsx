@@ -1,5 +1,8 @@
+import axios from 'axios';
+import { Header } from "components/Header/Header";
+import { API_USER_URL } from "configs/ApiRouteUrl";
 import { useForm } from "react-hook-form";
-import { Header } from "../../components/Header/Header";
+import { useNavigate } from 'react-router-dom';
 
 import {
     Button,
@@ -11,7 +14,23 @@ import {
 } from '@mui/material';
 
 const Signup = (data) => {
+    const navigate = useNavigate()
     const { register, handleSubmit, watch, errors } = useForm();
+
+    // サーバのURL
+    const url = `${API_USER_URL}user-create/`;
+
+    const createUser = async (data) =>{
+        // 新規ユーザーを作成
+        try{
+            await axios.post(url,data,)
+            navigate('/login/');
+        }
+        catch(error){
+            if(error)
+            alert(`ユーザーの作成に失敗しました。 ${error.response.request.responseText}`);
+        };
+    };
 
 return (
     <>
@@ -25,7 +44,7 @@ return (
                 新規登録
             </Typography>
             <CardContent>
-                <form onSubmit={handleSubmit()}>
+                <form onSubmit={handleSubmit(createUser)}>
                     <TextField
                         label="ユーザー名"
                         fullWidth

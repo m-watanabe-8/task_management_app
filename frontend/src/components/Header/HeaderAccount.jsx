@@ -1,10 +1,15 @@
 import FaceIcon from '@mui/icons-material/Face';
+import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { Logout } from "components/Logout";
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
 
 export function HeaderAccount() {
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const token = cookies.accessToken
     const [auth, setAuth] = useState(true);
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -34,7 +39,8 @@ export function HeaderAccount() {
                 >
                     <FaceIcon />
                 </IconButton>
-                <Menu
+                {token === void 0 ? (
+                    <Menu
                     id="menu-appbar"
                     sx={{ mt: '45px' }}
                     anchorEl={anchorEl}
@@ -49,9 +55,36 @@ export function HeaderAccount() {
                     }}
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
-                >
-                    <MenuItem onClick={handleClose}>ログアウト</MenuItem>
-                </Menu>
+                    >
+                        <MenuItem onClick={handleClose}>
+                            <Button color="inherit" href="/login/">ログイン</Button>
+                        </MenuItem>
+                        <MenuItem onClick={handleClose}>
+                            <Button color="inherit" href="/signup/">新規登録</Button>
+                        </MenuItem>
+                    </Menu>
+                ) : (
+                    <Menu
+                    id="menu-appbar"
+                    sx={{ mt: '45px' }}
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleClose}>
+                            <Logout />
+                        </MenuItem>
+                    </Menu>
+                )}
                 </div>
             )}
         </>

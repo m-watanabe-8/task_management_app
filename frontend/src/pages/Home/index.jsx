@@ -3,6 +3,8 @@ import { Header } from "components/Header/Header";
 import { TaskAccordion } from "components/TaskAccordion";
 import { useTaskList } from 'hooks/useTaskList';
 import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 import { Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -19,11 +21,17 @@ const Home = () => {
         refreshTaskList
     } = useTaskList();
 
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const navigate = useNavigate()
+
     const today = new Date();
     const formatTodayYM = today.getFullYear() + '/' + (today.getMonth()+1);
     const formatTodayDate = today.getDate();
 
     useEffect(() => {
+        if(cookies.accessToken === void 0){
+            navigate('/login')
+        }
         getTaskList()
     },[getTaskList]);
 
@@ -50,7 +58,7 @@ const Home = () => {
                 container 
                 spacing={3} 
                 sx={{ 
-                    m: 5,
+                    m: 4,
                     // 画面サイズに応じて動作変更
                     flexGrow: { xs: 'unset', md: 1 },
                     overflow: { xs: 'visible', md: 'hidden' },

@@ -1,11 +1,15 @@
 import axios from 'axios';
 import { API_AUTH_URL } from "configs/ApiRouteUrl";
 import { useCallback, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { getDayTaskList } from "utils/getDayTaskList";
 import { getStatusTaskList } from "utils/getStatusTaskList";
 
+
 export const useTaskList = () => {
     const today = new Date();
+
+    const [cookies] = useCookies(['accessToken']);
 
     const [todayTaskList, setTodayTaskList] = useState([]);
     const [specifiedTaskList, setSpecifiedTaskList] = useState([]);
@@ -20,7 +24,12 @@ export const useTaskList = () => {
         const url = `${API_AUTH_URL}task-search/?search_type=today`;
 
         try {
-            const response = await axios.get(url);
+            const response = await axios.get(url,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `JWT ${cookies.accessToken}`
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('本日日付のタスクが取得できませんでした。', error);
@@ -36,7 +45,12 @@ export const useTaskList = () => {
         const url = `${API_AUTH_URL}task-search/?search_type=specific_date&specific_date_start=${formatDayStart}&specific_date_end=${formatDayEnd}`;
 
         try {
-            const response = await axios.get(url);
+            const response = await axios.get(url,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `JWT ${cookies.accessToken}`
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('明日以降のタスクが取得できませんでした。', error);
@@ -48,6 +62,10 @@ export const useTaskList = () => {
 
     // 一覧の値を取得
     const getTaskList = useCallback(async() => {
+        if (!cookies.accessToken) {
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
 
@@ -90,7 +108,7 @@ export const useTaskList = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [cookies.accessToken]);
 
     // タスクの更新処理
     const refreshTaskList = useCallback(async () => {

@@ -1,10 +1,16 @@
 import { Header } from "components/Header/Header";
 import { SearchBar } from "components/SearchBar";
 import { TaskAccordion } from "components/TaskAccordion";
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 import { Box, Stack, Typography } from '@mui/material';
 
 const TaskSearch = () => {
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const navigate = useNavigate()
+
     const task1List = [
         {id:"1",name: "タスク名1", content: "タスクの内容" ,category: "work",start_date: "2024/12/11",end_date: "2024/12/13"},
         {id:"2",name: "タスク名2", content: "タスクの内容",category: "",start_date: "2024/12/12",end_date: "2024/12/13"},
@@ -14,6 +20,11 @@ const TaskSearch = () => {
         {id:"3",name: "タスク名2", content: "タスクの内容",category: "event",start_date: "2024/12/12",end_date: "2024/12/13"},
     ]
 
+    useEffect(() => {
+        if(cookies.accessToken === void 0){
+            navigate('/login')
+        }
+    },[]);
 
     return (
         <>

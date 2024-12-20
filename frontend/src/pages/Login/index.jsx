@@ -1,4 +1,8 @@
+import axios from 'axios';
+import { API_USER_URL } from "configs/ApiRouteUrl";
+import { useCookies } from 'react-cookie';
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 import { Header } from "../../components/Header/Header";
 
 import {
@@ -9,10 +13,66 @@ import {
     TextField,
     Typography
 } from '@mui/material';
+import { useEffect } from 'react';
+
 
 const Login = () => {
+    const navigate = useNavigate()
+    const [cookies, setCookie, removeCookie] = useCookies();
     const { register, handleSubmit, watch, errors } = useForm();
 
+    const apiURL = `${API_USER_URL}auth/jwt/create/`;
+
+    const getJwt = async (data) =>{
+        try{
+            // JWTトークンを取得
+            const response = await axios.post(apiURL,{
+                email:data.email,
+                password:data.password,
+            });
+            // useCookiesを用いて取得したトークンをCookieに保存
+            setCookie('accessToken', response.data.access, { 
+                path: '/',          // ドメイン全体でcookieを利用
+                sameSite: 'strict'  // 同一サイトからのリクエストのみCookieを送信
+                },
+                { httpOnly: true }
+            );
+            setCookie('refreshToken', response.data.refresh, { 
+                path: '/',
+                sameSite: 'strict' 
+                },
+                { httpOnly: true }
+            );
+            
+            // ユーザー情報を取得
+            const userURL = `${API_USER_URL}user-search/?email=${data.email}`;
+            console.log(userURL)
+            
+            const responseUser = await axios.get(userURL,{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `JWT ${response.data.access}`
+                }
+            });
+            setCookie('userId', responseUser.data[0].id, { 
+                path: '/',
+                sameSite: 'strict' 
+                },
+                { httpOnly: true }
+            );
+
+            navigate('/');      // 指定したパスに遷移
+        } catch(error){
+            alert("メールアドレスかパスワードが違います");
+            console.log(error)
+        };
+    };
+
+    useEffect(() => {
+        if(cookies.accessToken !== void 0){
+            navigate('/')
+        }
+    },[])
 
 return (
     <>
@@ -29,13 +89,13 @@ return (
                     メールアドレスとパスワードを入力して下さい
                 </Typography>
                 <CardContent>
-                    <form onSubmit={handleSubmit()}>
+                    <form onSubmit={handleSubmit(getJwt)}>
                         <TextField
                             label="メールアドレス"
                             fullWidth
                             margin="normal"
                             variant="standard"
-                            {...register('email')}
+                            {...register('email', { required: true })}
                         />
                         <TextField
                             label="パスワード"

@@ -33,10 +33,8 @@ class TaskListView(APIView):
                 # 指定日を変換
                 specific_date_str_start = request.query_params.get('specific_date_start')
                 specific_date_str_end = request.query_params.get('specific_date_end')
-                specific_date_start = datetime.strptime(specific_date_str_start, '%Y-%m-%d')
-                specific_date_end = datetime.strptime(specific_date_str_end, '%Y-%m-%d')
-                specific_date = make_aware(specific_date_start)
-                specific_date = make_aware(specific_date_end)
+                specific_date_start = make_aware(datetime.strptime(specific_date_str_start, '%Y-%m-%d'))
+                specific_date_end = make_aware(datetime.strptime(specific_date_str_end, '%Y-%m-%d'))
 
                 # 指定日が開始日の範囲内のデータ（完了以外）
                 tasks = Task.objects.filter(

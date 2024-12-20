@@ -142,15 +142,15 @@ CORS_ALLOWED_ORIGINS = [
 ]	
 
 # JWT認証を設定
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         #Simple JWTを読み込む
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ]
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        #Simple JWTを読み込む
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
 
 from datetime import timedelta
 SIMPLE_JWT = {
