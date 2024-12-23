@@ -1,30 +1,59 @@
 import { Header } from "components/Header/Header";
 import { SearchBar } from "components/SearchBar";
 import { TaskAccordion } from "components/TaskAccordion";
-import { useEffect } from 'react';
+import { useMemberTaskList } from 'hooks/useMemberTaskList';
+import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
+import { useDebouncedCallback } from "use-debounce";
+
 
 import { Box, Stack, Typography } from '@mui/material';
 
 const TaskSearch = () => {
+    const {
+        memberTaskList,
+        isLoading,
+        error,
+        getMemberTaskList,
+        refreshTaskList
+    } = useMemberTaskList();
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
 
-    const task1List = [
-        {id:"1",name: "タスク名1", content: "タスクの内容" ,category: "work",start_date: "2024/12/11",end_date: "2024/12/13"},
-        {id:"2",name: "タスク名2", content: "タスクの内容",category: "",start_date: "2024/12/12",end_date: "2024/12/13"},
-        {id:"3",name: "タスク名2", content: "タスクの内容",category: "go_out",start_date: "2024/12/12",end_date: "2024/12/13"},
-        {id:"3",name: "タスク名2", content: "タスクの内容",category: "other",start_date: "2024/12/12",end_date: "2024/12/13"},
-        {id:"3",name: "タスク名2", content: "タスクの内容",category: "meeting",start_date: "2024/12/12",end_date: "2024/12/13"},
-        {id:"3",name: "タスク名2", content: "タスクの内容",category: "event",start_date: "2024/12/12",end_date: "2024/12/13"},
-    ]
+    const [filteredData, setFilteredData] = useState(memberTaskList);
+
+    // 検索用のフィルタリング関数
+    const handleSearch = useDebouncedCallback(
+        (searchTerm) => {
+            if (!searchTerm) {
+                setFilteredData(memberTaskList); // 検索がない場合はすべてのデータを表示
+            } else {
+                const filtered = memberTaskList.map(userData => ({
+                    ...userData,
+                    taskList: userData.taskList.map(taskData => ({
+                        ...taskData,
+                        tasks: taskData.tasks.filter(task =>
+                            task.title.includes(searchTerm) // タスク名で検索
+                        )
+                    }))
+                }))
+                setFilteredData(filtered);
+            }
+        },
+        300,
+    );
 
     useEffect(() => {
         if(cookies.accessToken === void 0){
             navigate('/login')
         }
-    },[]);
+        getMemberTaskList();
+    },[getMemberTaskList]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <>
@@ -37,7 +66,9 @@ const TaskSearch = () => {
             <Header />
             <Box sx={{ width: '100%' }}>
                 <Box sx={{m:3}}>
-                    <SearchBar />
+                    <SearchBar 
+                    onSearch={handleSearch}
+                    />
                 </Box>
                 <Box 
                 sx={{ 
@@ -60,9 +91,9 @@ const TaskSearch = () => {
                     }}
                     >
                         {/* タスク */}
-                        { [1,2,3,4,5,6].map((value) => 
+                        {filteredData.map((userTask) => (
                             <Box
-                            key={value}
+                            key={userTask.user}
                             sx={{ 
                                 height: { xs: 'auto', md: 'calc(100vh - 300px)' },
                                 minWidth: { xs: 'auto', md: '20vw' },
@@ -70,29 +101,24 @@ const TaskSearch = () => {
                                 mb: { xs: 2, md: 0 },
                                 p: 3,
                             }}>
-                                <Typography variant="h6" component="div">
-                                    メンバー {value}
-                                </Typography>
-                                {/* メンバーのタスク(完了以外) */}
-                                <Box size={12}
-                                spacing={1}
-                                sx={{
-                                    maxHeight: 'calc(100vh - 330px)',  
-                                    overflowY: 'auto',  
-                                }}>
-                                    <TaskAccordion 
-                                        taskList={task1List}
-                                        statusName={"進行中"}
-                                        colorCode={"#1ed7cd"}
-                                    />
-                                    <TaskAccordion 
-                                        taskList={task1List}
-                                        statusName={"進行中"}
-                                        colorCode={"#18c4b8"}
-                                    />
-                                </Box>
+                                <Typography variant="h6" component="div">{userTask.user}</Typography>
+                                    <Box size={12}
+                                    spacing={1}
+                                    sx={{
+                                        maxHeight: 'calc(100vh - 330px)',  
+                                        overflowY: 'auto',  
+                                    }}>
+                                        {userTask.taskList.map((tasks, index) => (
+                                            <TaskAccordion 
+                                                key={index}
+                                                taskList={tasks.tasks}
+                                                statusName={tasks.statusName}
+                                                onTaskUpdate={refreshTaskList}
+                                            />
+                                        ))}
+                                    </Box>
                             </Box>
-                        )}
+                        ))}
                     </Stack>
                 </Box>
             </Box>
@@ -101,4 +127,3 @@ const TaskSearch = () => {
     );
 }
 export default TaskSearch;
-

@@ -11,6 +11,7 @@ export const Logout = () => {
         // トークンをCookieから削除
         removeCookie('accessToken',{path:'/'});
         removeCookie('refreshToken',{path:'/'});
+        removeCookie('useId',{path:'/'});
         navigate('/login/');
     }
     

@@ -10,10 +10,36 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import InputBase from '@mui/material/InputBase';
 import { alpha, styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
 
+import { useEffect, useRef, useState } from 'react';
 
-export function SearchBar() {
+export function SearchBar({ onSearch }) {
+
+    const [searchInput, setSearchInput] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // 現在 IME ON（変換中）かどうかのフラグ
+    const isImeOn = useRef(false)
+    
+    // 入力テキストを処理する
+    const handleChange = (value) => {
+        // 変換中（IMEオン）の場合は何もしない
+        if (isImeOn.current) return;
+
+        // 値が変わったときに更新
+        if (searchInput !== value) {
+            setSearchInput(value);
+        }
+    };
+
+    useEffect(() => {
+        if (searchTerm !== searchInput) {
+            setSearchTerm(searchInput); // 検索確定値を更新
+            onSearch(searchTerm); // 検索実行
+            console.log("検索実行", searchTerm);
+        }
+    }, [searchTerm, searchInput, onSearch]);
+    
 
     // 検索バーのスタイル
     const Search = styled('div')(({ theme }) => ({
@@ -153,6 +179,15 @@ export function SearchBar() {
             <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
+                defaultValue={searchInput}
+                onChange={(e)=>handleChange(e.target.value)}
+                onCompositionStart={() => {
+                    isImeOn.current = true // IME 入力中フラグを ON
+                }}
+                onCompositionEnd={(e) => {
+                    isImeOn.current = false // IME 入力中フラグを OFF
+                    setSearchInput(e.target.value) // 入力確定したとき値に設定
+                }}
             />
         </Search>
         <Accordion square sx={{ ml:1, width: "40%" }}>

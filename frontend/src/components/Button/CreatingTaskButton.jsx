@@ -31,6 +31,7 @@ export function CreatingTaskButton({ onTaskUpdate }) {
             handleClose={handleClose} 
             task={{}}
             onTaskUpdate={onTaskUpdate}
+            isNew={true}
         />
     </>
     )

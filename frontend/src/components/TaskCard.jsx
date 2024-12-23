@@ -92,6 +92,7 @@ export function TaskCard({taskList, onTaskUpdate}) {
                 handleClose={handleClose} 
                 task={targetTask}
                 onTaskUpdate={onTaskUpdate}
+                isNew={false}
             />
         </> 
     )

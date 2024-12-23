@@ -16,11 +16,10 @@ import {
     DialogTitle,
     FormControl,
     FormControlLabel,
-    FormGroup,
     InputLabel,
     MenuItem,
     Select,
-    TextField
+    TextField,
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -28,7 +27,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 
-export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
+export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
     // サーバのURL
     const url = `${API_AUTH_URL}task/`;
 
@@ -40,12 +39,11 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
     } = useForm()
 
     const navigate = useNavigate()
-    const [cookies] = useCookies(['accessToken']);
-
+    const [cookies, setCookie, removeCookie] = useCookies();
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [openDel, setOpenDel] = useState(false);
-
+    const userId = cookies.userId
 
     const onSubmit = async (data) => {
         // 日付を成形
@@ -53,6 +51,8 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
         const formatEndDate = data.end_date.year() + '-' + (data.end_date.month()+1) + '-' + (data.end_date.date());
         data.start_date = formatStartDate;
         data.end_date = formatEndDate;
+
+        data.user = userId
 
         try {
             if(Object.keys(task).length === 0){
@@ -116,8 +116,7 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
             >
                 <DialogTitle>{Object.keys(task).length === 0 ? "タスクの作成" : "タスクの編集"}</DialogTitle>
                 <DialogContent>
-                
-                {task.user === cookies.userId ? (
+                    {/* 自分以外のタスクは編集できない */}
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <TextField
                             fullWidth
@@ -129,6 +128,11 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
                             error={!!errors.title}
                             helperText={errors.title?.message}
                             aria-invalid={errors.title ? "true" : "false"}
+                            slotProps={{
+                                input: {
+                                    readOnly: !(task.user === userId || isNew)
+                                },
+                            }}
                         />
                         <TextField
                             fullWidth
@@ -141,29 +145,38 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
                             {...register('content', { required: false })}
                             error={!!errors.content}
                             helperText={errors.content?.message}
+                            slotProps={{
+                                input: {
+                                    readOnly: !(task.user === userId || isNew)
+                                },
+                            }}
                         />
-                        <Controller
-                            name="start_date"
-                            control={control}
-                            defaultValue={dayjs(task.start_date)}
-                            rules={{ required: '開始日は必須です' }}
-                            render={({ field }) => (
-                                <DatePicker
-                                    {...field}
-                                    fullWidth
-                                    label="開始日"
-                                    format="YYYY/MM/DD"
-                                    onChange={(newValue) => {
-                                        field.onChange(newValue);
-                                        setStartDate(newValue);
-                                    }}
-                                    variant="outlined"
-                                    margin="normal"
-                                    error={!!errors.start_date}
-                                    helperText={errors.start_date?.message}
-                                />
-                            )}
-                        />
+                        <section style={{marginTop:"16px", marginBottom:"16px"}}>
+                            <Controller
+                                name="start_date"
+                                control={control}
+                                defaultValue={dayjs(task.start_date)}
+                                rules={{ required: '開始日は必須です' }}
+                                render={({ field }) => (
+                                    <DatePicker
+                                        {...field}
+                                        fullWidth
+                                        label="開始日"
+                                        format="YYYY/MM/DD"
+                                        onChange={(newValue) => {
+                                            field.onChange(newValue);
+                                            setStartDate(newValue);
+                                        }}
+                                        variant="outlined"
+                                        margin="normal"
+                                        error={!!errors.start_date}
+                                        helperText={errors.start_date?.message}
+                                        disabled={!(task.user === userId || isNew)}
+                                    />
+                                )}
+                            />
+                        </section>
+                        <section style={{marginBottom:"8px"}}>
                         <Controller
                             name="end_date"
                             control={control}
@@ -183,15 +196,18 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
                                     margin="normal"
                                     error={!!errors.end_date}
                                     helperText={errors.end_date?.message}
+                                    disabled={!(task.user === userId || isNew)}
                                 />
                             )}
                         />
+                        </section>
                         <FormControl fullWidth margin="normal">
                             <InputLabel>カテゴリ</InputLabel>
                             <Select
                             defaultValue={task.category}
                             label="カテゴリ"
                             {...register('category')}
+                            disabled={!(task.user === userId || isNew)}
                             >
                                 <MenuItem value='work'>作業</MenuItem>
                                 <MenuItem value='meeting'>会議・打ち合わせ</MenuItem>
@@ -207,6 +223,7 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
                             defaultValue={task.status}
                             label="ステータス"
                             {...register('status', { required: 'ステータスは必須です' })}
+                            disabled={!(task.user === userId || isNew)}
                             >
                                 <MenuItem value='todo'>未着手</MenuItem>
                                 <MenuItem value='doing'>進行中</MenuItem>
@@ -223,30 +240,24 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate}) {
                                     <FormControlLabel
                                         control={<Checkbox {...field} checked={field.value} />}
                                         label="完了"
+                                        disabled={!(task.user === userId || isNew)}
                                     />
                                 )}
                             />
                             {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
                         </FormControl>
                     </form>
-                ) : (
-                    <>
-                        
-                        <FormGroup>
-                            <FormControlLabel 
-                            disabled 
-                            control={<Checkbox />} 
-                            label="完了" 
-                            checked={task.is_done}
-                            />
-                        </FormGroup>
-                    </>
-                )}
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" sx={{backgroundColor: "#05a7be"}} onClick={handleSubmit(onSubmit)}>登録</Button>
+                    {task.user === userId || isNew ? (
+                        <>
+                            <Button variant="contained" sx={{backgroundColor: "#05a7be"}} onClick={handleSubmit(onSubmit)}>登録</Button>
+                            <Button variant="contained" sx={{backgroundColor: "#e45f2b"}} onClick={handleOpenDel}>削除</Button>
+                        </>
+                    ) : (
+                        <></>
+                    )}
                     <Button variant="contained" sx={{backgroundColor: "#8c9cb2"}} onClick={handleClose} >キャンセル</Button>
-                    <Button variant="contained" sx={{backgroundColor: "#1f7a6a"}} onClick={handleOpenDel}>削除</Button>
                 </DialogActions>
             </Dialog>
             <DeleteDialog
