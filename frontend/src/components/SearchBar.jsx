@@ -9,91 +9,40 @@ import {
     Checkbox,
     Divider,
     FormControlLabel,
-    InputBase,
+    TextField,
     Typography
 } from '@mui/material';
-import { alpha, styled } from '@mui/material/styles';
 
 import { useEffect, useState } from 'react';
 
-export function SearchBar({ onSearch }) {
+export function SearchBar({ onSearch, memberList }) {
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [checkedList, setCheckedList] = useState([]);
     
-    // 入力テキストで検索する
+    // 検索値の変更
+    const handleChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // 入力テキストで検索、チェックで絞り込み
     const handleSubmit = () => {
-        onSearch(searchTerm);
+        onSearch(searchTerm, checkedList);
     };
 
     useEffect(() => {
-        onSearch(searchTerm)
+        onSearch(searchTerm);
+
+        // チェックリスト
+        setCheckedList(
+            memberList.map((member, index) => ({
+                id: index,
+                name: member,
+                isChecked: true
+            }))
+        );
     },[]);
 
-    // 検索バーのスタイル
-    const Search = styled('div')(({ theme }) => ({
-        position: 'relative',
-        '--Grid-borderWidth': '2px',
-        border: 'var(--Grid-borderWidth) solid',
-        borderColor: '#c2d8e1',
-        borderRadius: '10px',
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
-        '&:hover': {
-            backgroundColor: alpha(theme.palette.common.white, 0.25),
-        },
-        marginLeft: 0,
-        width: '30vw',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(1),
-        },
-    }));
-
-    const SearchIconWrapper = styled('div')(({ theme }) => ({
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }));
-
-    const StyledInputBase = styled(InputBase)(({ theme }) => ({
-        color: 'inherit',
-        width: '100%',
-        '& .MuiInputBase-input': {
-            padding: theme.spacing(1, 1, 1, 0),
-            // vertical padding + font size from searchIcon
-            paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-            transition: theme.transitions.create('width'),
-            [theme.breakpoints.up('sm')]: {
-                width: '12ch',
-                '&:focus': {
-                    width: '20ch',
-                },
-            },
-        },
-    }));
-
-
-    // 絞り込み
-    const memberlist = [
-        {id:"1",name:"aaa"},
-        {id:"2",name:"bbb"},
-        {id:"3",name:"ccc"},
-        {id:"4",name:"ddd"},
-        {id:"5",name:"eee"}
-    ]
-    const [checkedList, setCheckedList] = useState([
-        {id:0,isChecked:false},
-        {id:1,isChecked:false},
-        {id:2,isChecked:false},
-        {id:3,isChecked:false},
-        {id:4,isChecked:false}
-        // memberlist.map((member, index) => ({
-        //     id: index,
-        //     isChecked: false
-        // }))
-    ]);
 
     // 親チェックボックスの状態管理
     const [parentChecked, setParentChecked] = useState(false);
@@ -141,7 +90,7 @@ export function SearchBar({ onSearch }) {
     // 絞り込み条件の子要素
     const children = (
         <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            {memberlist.map((member,index) => {
+            {checkedList.map((member,index) => {
                 return(
                     <FormControlLabel
                         key={member.id}
@@ -159,53 +108,55 @@ export function SearchBar({ onSearch }) {
     );
 
     return(
-        <>
-        <Box display={'flex'} flexDirection={'row'}>
-            <Search sx={{ mb:1, mr:1 }}>
-                <SearchIconWrapper>
-                    <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ 'aria-label': 'search' }}
-                    defaultValue={searchTerm}
-                    onChange={(e)=>setSearchTerm(e.target.value)}
+        <Box sx={{ mb:1, ml:1, }}>
+            <Box display={'flex'} alignItems={"center"} sx={{ mb:1 }}>
+                <TextField
+                    value={searchTerm}
+                    onChange={handleChange}
+                    placeholder="検索..."
+                    variant="outlined"
+                    sx={{ mr:1 }}
+                    // 入力言語の設定を追加
+                    slotProps={{
+                        style: { 
+                            ime: 'auto',  // IMEの自動制御
+                        },
+                    }}
                 />
-            </Search>
-            <Button 
-                    variant="contained" 
-                    sx={{
-                        backgroundColor: "#05a7be",
-                        height: 40,
-                    }} 
-                    onClick={() => handleSubmit({})}
+                <Button 
+                        variant="contained" 
+                        sx={{
+                            backgroundColor: "#05a7be",
+                            height: 50,
+                        }} 
+                        onClick={handleSubmit}
+                    >
+                        <SearchIcon />
+                </Button>
+            </Box>
+            <Accordion square sx={{ width: "40%" }}>
+                <AccordionSummary
+                expandIcon={<ExpandMoreRoundedIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
                 >
-                    検索
-            </Button>
+                    <Typography sx={{ flexShrink: 0 }}>フィルター</Typography>
+                </AccordionSummary>
+                <Divider />
+                <AccordionDetails>
+                <FormControlLabel
+                    label="全メンバー"
+                    control={
+                        <Checkbox
+                            checked={parentChecked}
+                            indeterminate={isIndeterminate}
+                            onChange={handleChangeParent}
+                        />
+                    }
+                />
+                {children}
+                </AccordionDetails>
+            </Accordion>
         </Box>
-        <Accordion square sx={{ ml:1, width: "40%" }}>
-            <AccordionSummary
-            expandIcon={<ExpandMoreRoundedIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-            >
-                <Typography sx={{ flexShrink: 0 }}>フィルター</Typography>
-            </AccordionSummary>
-            <Divider />
-            <AccordionDetails>
-            <FormControlLabel
-                label="全メンバー"
-                control={
-                    <Checkbox
-                        checked={parentChecked}
-                        indeterminate={isIndeterminate}
-                        onChange={handleChangeParent}
-                    />
-                }
-            />
-            {children}
-            </AccordionDetails>
-        </Accordion>
-        </>
     )
 }

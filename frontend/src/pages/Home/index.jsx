@@ -139,7 +139,7 @@ const Home = () => {
                         // 画面サイズに応じて動作変更
                         flexGrow: { xs: 'unset', md: 1 },
                         // 縦並び時の高さ調整
-                        minHeight: { xs: 'fit-content', md: 'calc(100vh - 300px)' },
+                        minHeight: { xs: 'fit-content', md: 'calc(100vh - 280px)' },
                         flexDirection: { xs: 'column', md: 'row' },
                         maxWidth: '100vw',  
                         overflowX: 'auto', 
@@ -158,7 +158,7 @@ const Home = () => {
                                 key={index}
                                 spacing={2}
                                 sx={{ 
-                                    height: { xs: 'auto', md: 'calc(100vh - 250px)' },
+                                    height: { xs: 'auto', md: 'calc(100vh - 235px)' },
                                     minWidth: { xs: 'auto', md: '20vw' },
                                     flexShrink: 0,
                                     mb: { xs: 2, md: 0 },
@@ -170,7 +170,7 @@ const Home = () => {
                                     <Box 
                                     size={12}
                                     sx={{
-                                        maxHeight: 'calc(100vh - 270px)',  
+                                        maxHeight: 'calc(100vh - 250px)',  
                                         overflowY: 'auto',  
                                     }}>
                                         {dayTaskList.taskList.map((statusTasks, index) => {

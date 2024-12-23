@@ -11,6 +11,7 @@ export const useMemberTaskList = () => {
     const [cookies, setCookie, removeCookie] = useCookies();
 
     const [memberTaskList, SetMemberTaskList] = useState([])
+    const [memberList, SetMemberList] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -50,15 +51,20 @@ export const useMemberTaskList = () => {
             const memberTasks = await getMemberSpecifiedTaskList();
             
             if (memberTasks) {
-                let newTaskList = []
-        
+                const newTaskList = [];
+                const members = [];
+                
                 // ステータスでタスクを分割
-                Object.keys(memberTasks).map((user) => {
-                    let statusTasks =  getStatusTaskList(memberTasks[user])
-                    newTaskList.push({user: user, taskList: statusTasks[0]})
-                })
-                SetMemberTaskList(newTaskList)
-            }
+                Object.keys(memberTasks).forEach((user) => {
+                    // メンバーのリストを作成
+                    members.push(user);
+                    
+                    let statusTasks =  getStatusTaskList(memberTasks[user]);
+                    newTaskList.push({user: user, taskList: statusTasks[0]});
+                });
+                SetMemberTaskList(newTaskList);
+                SetMemberList(members);
+            };
 
         } catch (error) {
             console.error('タスクの取得と振り分けに失敗しました。', error);
@@ -75,6 +81,7 @@ export const useMemberTaskList = () => {
 
     return {
         memberTaskList,
+        memberList,
         isLoading,
         error,
         getMemberTaskList,

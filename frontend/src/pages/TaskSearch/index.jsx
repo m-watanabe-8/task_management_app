@@ -12,6 +12,7 @@ import { Box, Stack, Typography } from '@mui/material';
 const TaskSearch = () => {
     const {
         memberTaskList,
+        memberList,
         isLoading,
         error,
         getMemberTaskList,
@@ -23,11 +24,12 @@ const TaskSearch = () => {
     const [filteredData, setFilteredData] = useState(memberTaskList);
 
     // 検索用のフィルタリング関数
-    const handleSearch = (searchTerm) => {
-        if (!searchTerm) {
+    const onSearch = (searchTerm, checkedList) => {
+        if (!searchTerm && !checkedList) {
             setFilteredData(memberTaskList); // 検索がない場合はすべてのデータを表示
         } else {
-            const filtered = memberTaskList.map(userData => ({
+            // 検索
+            const filteredSearch = memberTaskList.map(userData => ({
                 ...userData,
                 taskList: userData.taskList.map(taskData => ({
                     ...taskData,
@@ -36,6 +38,10 @@ const TaskSearch = () => {
                     )
                 }))
             }))
+            // 絞り込み
+            const filtered = filteredSearch.filter(userData => (
+                checkedList.some(member => member.isChecked && userData.user === member.name)
+            ))
             setFilteredData(filtered);
         }
     };
@@ -63,7 +69,8 @@ const TaskSearch = () => {
             <Box sx={{ width: '100%' }}>
                 <Box sx={{m:3}}>
                     <SearchBar 
-                    onSearch={handleSearch}
+                    onSearch={onSearch}
+                    memberList={memberList}
                     />
                 </Box>
                 <Box 
@@ -87,9 +94,9 @@ const TaskSearch = () => {
                     }}
                     >
                         {/* タスク */}
-                        {filteredData.map((userTask) => (
+                        {filteredData.map((userTask,index) => (
                             <Box
-                            key={userTask.user}
+                            key={index}
                             sx={{ 
                                 height: { xs: 'auto', md: 'calc(100vh - 300px)' },
                                 minWidth: { xs: 'auto', md: '20vw' },
@@ -98,21 +105,21 @@ const TaskSearch = () => {
                                 p: 3,
                             }}>
                                 <Typography variant="h6" component="div">{userTask.user}</Typography>
-                                    <Box size={12}
-                                    spacing={1}
-                                    sx={{
-                                        maxHeight: 'calc(100vh - 330px)',  
-                                        overflowY: 'auto',  
-                                    }}>
-                                        {userTask.taskList.map((tasks, index) => (
-                                            <TaskAccordion 
-                                                key={index}
-                                                taskList={tasks.tasks}
-                                                statusName={tasks.statusName}
-                                                onTaskUpdate={refreshTaskList}
-                                            />
-                                        ))}
-                                    </Box>
+                                <Box size={12}
+                                spacing={1}
+                                sx={{
+                                    maxHeight: 'calc(100vh - 330px)',  
+                                    overflowY: 'auto',  
+                                }}>
+                                    {userTask.taskList.map((tasks, index) => (
+                                        <TaskAccordion 
+                                            key={index}
+                                            taskList={tasks.tasks}
+                                            statusName={tasks.statusName}
+                                            onTaskUpdate={refreshTaskList}
+                                        />
+                                    ))}
+                                </Box>
                             </Box>
                         ))}
                     </Stack>
