@@ -31,12 +31,7 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
     // サーバのURL
     const url = `${API_AUTH_URL}task/`;
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm()
+    const { register,handleSubmit,control,formState: { errors } } = useForm()
 
     const navigate = useNavigate()
     const [cookies, setCookie, removeCookie] = useCookies();
@@ -124,7 +119,13 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                             defaultValue={task.title}
                             variant="outlined"
                             margin="normal"
-                            {...register('title', { required: 'タイトルは必須です' })}
+                            {...register('title', { 
+                                required: 'タイトルは必須です',
+                                maxLength: {
+                                    value: 100,
+                                    message: '最大100文字です'
+                                },
+                            })}
                             error={!!errors.title}
                             helperText={errors.title?.message}
                             aria-invalid={errors.title ? "true" : "false"}
@@ -142,7 +143,13 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                             margin="normal"
                             multiline
                             rows={4}
-                            {...register('content', { required: false })}
+                            {...register('content', { 
+                                required: '内容は必須です',
+                                maxLength: {
+                                    value: 500,
+                                    message: '最大500文字です'
+                                },
+                            })}
                             error={!!errors.content}
                             helperText={errors.content?.message}
                             slotProps={{
@@ -204,10 +211,12 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                         <FormControl fullWidth margin="normal">
                             <InputLabel>カテゴリ</InputLabel>
                             <Select
-                            defaultValue={task.category}
+                            defaultValue={task.category || 'work'}
                             label="カテゴリ"
-                            {...register('category')}
+                            {...register('category', { required: 'カテゴリは必須です' })}
                             disabled={!(task.user === userId || isNew)}
+                            error={!!errors.category}
+                            helperText={errors.category?.message}
                             >
                                 <MenuItem value='work'>作業</MenuItem>
                                 <MenuItem value='meeting'>会議・打ち合わせ</MenuItem>
@@ -215,21 +224,21 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                                 <MenuItem value='event'>イベント</MenuItem>
                                 <MenuItem value='other'>その他</MenuItem>
                             </Select>
-                            {errors.category && <p style={{ color: 'red' }}>{errors.category.message}</p>}
                         </FormControl>
                         <FormControl fullWidth margin="normal">
                             <InputLabel>ステータス</InputLabel>
                             <Select
-                            defaultValue={task.status}
+                            defaultValue={task.status || 'todo'}
                             label="ステータス"
                             {...register('status', { required: 'ステータスは必須です' })}
                             disabled={!(task.user === userId || isNew)}
+                            error={!!errors.status}
+                            helperText={errors.status?.message}
                             >
                                 <MenuItem value='todo'>未着手</MenuItem>
                                 <MenuItem value='doing'>進行中</MenuItem>
                                 <MenuItem value='undecided'>未定</MenuItem>
                             </Select>
-                            {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
                         </FormControl>
                         <FormControl fullWidth margin="normal">
                             <Controller
@@ -244,7 +253,6 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                                     />
                                 )}
                             />
-                            {errors.status && <p style={{ color: 'red' }}>{errors.status.message}</p>}
                         </FormControl>
                     </form>
                 </DialogContent>

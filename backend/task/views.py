@@ -35,14 +35,11 @@ class TaskListView(APIView):
             elif search_type == 'specific_date':
                 # 指定日を変換
                 specific_date_str_start = request.query_params.get('specific_date_start')
-                specific_date_str_end = request.query_params.get('specific_date_end')
                 specific_date_start = make_aware(datetime.strptime(specific_date_str_start, '%Y-%m-%d'))
-                specific_date_end = make_aware(datetime.strptime(specific_date_str_end, '%Y-%m-%d'))
                 user = request.query_params.get('login_user')
                 
                 tasks = Task.objects.filter(
                     start_date__gte=specific_date_start,
-                    start_date__lte=specific_date_end,
                     user=user,
                     is_done = False
                 )
@@ -59,8 +56,8 @@ class TaskListView(APIView):
                 specific_date_end = make_aware(datetime.strptime(specific_date_str_end, '%Y-%m-%d'))
 
                 tasks = Task.objects.filter(
-                    start_date__lte=today,
-                    end_date__gte=today,
+                    start_date__lte=specific_date_start,
+                    end_date__gte=specific_date_end,
                     is_done = False
                 )
 

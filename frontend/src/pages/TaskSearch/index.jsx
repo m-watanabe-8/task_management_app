@@ -5,7 +5,6 @@ import { useMemberTaskList } from 'hooks/useMemberTaskList';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
-import { useDebouncedCallback } from "use-debounce";
 
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -24,25 +23,22 @@ const TaskSearch = () => {
     const [filteredData, setFilteredData] = useState(memberTaskList);
 
     // 検索用のフィルタリング関数
-    const handleSearch = useDebouncedCallback(
-        (searchTerm) => {
-            if (!searchTerm) {
-                setFilteredData(memberTaskList); // 検索がない場合はすべてのデータを表示
-            } else {
-                const filtered = memberTaskList.map(userData => ({
-                    ...userData,
-                    taskList: userData.taskList.map(taskData => ({
-                        ...taskData,
-                        tasks: taskData.tasks.filter(task =>
-                            task.title.includes(searchTerm) // タスク名で検索
-                        )
-                    }))
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm) {
+            setFilteredData(memberTaskList); // 検索がない場合はすべてのデータを表示
+        } else {
+            const filtered = memberTaskList.map(userData => ({
+                ...userData,
+                taskList: userData.taskList.map(taskData => ({
+                    ...taskData,
+                    tasks: taskData.tasks.filter(task =>
+                        task.title.includes(searchTerm) // タスク名で検索
+                    )
                 }))
-                setFilteredData(filtered);
-            }
-        },
-        300,
-    );
+            }))
+            setFilteredData(filtered);
+        }
+    };
 
     useEffect(() => {
         if(cookies.accessToken === void 0){

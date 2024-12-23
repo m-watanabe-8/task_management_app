@@ -1,45 +1,33 @@
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import SearchIcon from '@mui/icons-material/Search';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import InputBase from '@mui/material/InputBase';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Checkbox,
+    Divider,
+    FormControlLabel,
+    InputBase,
+    Typography
+} from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function SearchBar({ onSearch }) {
 
-    const [searchInput, setSearchInput] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // 現在 IME ON（変換中）かどうかのフラグ
-    const isImeOn = useRef(false)
     
-    // 入力テキストを処理する
-    const handleChange = (value) => {
-        // 変換中（IMEオン）の場合は何もしない
-        if (isImeOn.current) return;
-
-        // 値が変わったときに更新
-        if (searchInput !== value) {
-            setSearchInput(value);
-        }
+    // 入力テキストで検索する
+    const handleSubmit = () => {
+        onSearch(searchTerm);
     };
 
     useEffect(() => {
-        if (searchTerm !== searchInput) {
-            setSearchTerm(searchInput); // 検索確定値を更新
-            onSearch(searchTerm); // 検索実行
-            console.log("検索実行", searchTerm);
-        }
-    }, [searchTerm, searchInput, onSearch]);
-    
+        onSearch(searchTerm)
+    },[]);
 
     // 検索バーのスタイル
     const Search = styled('div')(({ theme }) => ({
@@ -172,24 +160,29 @@ export function SearchBar({ onSearch }) {
 
     return(
         <>
-        <Search sx={{ mb:1 }}>
-            <SearchIconWrapper>
-                <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-                defaultValue={searchInput}
-                onChange={(e)=>handleChange(e.target.value)}
-                onCompositionStart={() => {
-                    isImeOn.current = true // IME 入力中フラグを ON
-                }}
-                onCompositionEnd={(e) => {
-                    isImeOn.current = false // IME 入力中フラグを OFF
-                    setSearchInput(e.target.value) // 入力確定したとき値に設定
-                }}
-            />
-        </Search>
+        <Box display={'flex'} flexDirection={'row'}>
+            <Search sx={{ mb:1, mr:1 }}>
+                <SearchIconWrapper>
+                    <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                    defaultValue={searchTerm}
+                    onChange={(e)=>setSearchTerm(e.target.value)}
+                />
+            </Search>
+            <Button 
+                    variant="contained" 
+                    sx={{
+                        backgroundColor: "#05a7be",
+                        height: 40,
+                    }} 
+                    onClick={() => handleSubmit({})}
+                >
+                    検索
+            </Button>
+        </Box>
         <Accordion square sx={{ ml:1, width: "40%" }}>
             <AccordionSummary
             expandIcon={<ExpandMoreRoundedIcon />}

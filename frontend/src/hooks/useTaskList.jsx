@@ -9,8 +9,6 @@ import { getStatusTaskList } from "utils/getStatusTaskList";
 export const useTaskList = () => {
     const [cookies, setCookie, removeCookie] = useCookies();
 
-    const [todayTaskList, setTodayTaskList] = useState([]);
-    const [specifiedTaskList, setSpecifiedTaskList] = useState([]);
     const [todayStatusTasks, setTodayStatusTasks] = useState([]);   //完了以外のステータスの今日のタスク
     const [doneTasks, setDoneTasks] = useState([]);                 //完了ステータスの今日のタスク
     const [specifiedTasks, setSpecifiedTasks] = useState([]);       // 日付別ステータスで分割したタスクリスト（明日以降）
@@ -40,8 +38,7 @@ export const useTaskList = () => {
     const getSpecifiedTaskList = async () => {
         const today = new Date();
         const formatDayStart = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate()+1);
-        const formatDayEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate()+5);
-        const url = `${API_AUTH_URL}task-search/?search_type=specific_date&specific_date_start=${formatDayStart}&specific_date_end=${formatDayEnd}&login_user=${cookies.userId}`;
+        const url = `${API_AUTH_URL}task-search/?search_type=specific_date&specific_date_start=${formatDayStart}&login_user=${cookies.userId}`;
 
         try {
             const response = await axios.get(url,{
@@ -73,8 +70,6 @@ export const useTaskList = () => {
             const todayTasks = await getTodayTaskList();
 
             if (todayTasks && Array.isArray(todayTasks)) {
-                setTodayTaskList(todayTasks);
-
                 // ステータスで分割
                 const statusTasks = getStatusTaskList(todayTasks);
                 setTodayStatusTasks(statusTasks[0])
@@ -85,20 +80,20 @@ export const useTaskList = () => {
             const specifiedTasks = await getSpecifiedTaskList()
 
             if (specifiedTasks && Array.isArray(specifiedTasks)) {
-                setSpecifiedTaskList(specifiedTasks);
-
                 // 日付ごと
                 const dayTasks = getDayTaskList(specifiedTasks)
 
                 // 日付別でステータスで分割
-                const statusTasks1 = getStatusTaskList(dayTasks[0]);
-                const statusTasks2 = getStatusTaskList(dayTasks[1]);
-                const statusTasks3 = getStatusTaskList(dayTasks[2]);
-                const statusTasks4 = getStatusTaskList(dayTasks[3]);
-                const statusTasks5 = getStatusTaskList(dayTasks[4]);
+                // タスクを日付ごとにグループ化するためのオブジェクト
+                const taskGroups = [];
 
-                const specifiedTaskList = [statusTasks1[0], statusTasks2[0], statusTasks3[0], statusTasks4[0], statusTasks5[0]]
-                setSpecifiedTasks(specifiedTaskList)
+                // ステータスで分割
+                dayTasks.forEach((task)=> {
+                    const statusTasks = getStatusTaskList(task.taskList);
+                    taskGroups.push({taskDate:task.taskDate, taskList:statusTasks[0]});
+                });
+
+                setSpecifiedTasks(taskGroups)
             }
 
         } catch (error) {

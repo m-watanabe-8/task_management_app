@@ -1,41 +1,40 @@
+
 export const getDayTaskList = (allTaskList) => {
     // 引数チェック
     if (!Array.isArray(allTaskList)) {
-        return [[], [], [], [], []];  // allTaskListが配列でない場合は空の配列を返す
+        return [];  // allTaskListが配列でない場合は空の配列を返す
     }
 
     // 指定日検索用の日付取得
     const today = new Date();
-    const getFormatDay = (num) => {
-        return today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate()+num);
+    const getFormatDay = (date) => {
+        return `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${(date).toString().padStart(2, '0')}`;
     };
 
-    // 一時的な配列
-    const day1 = [];
-    const day2 = [];
-    const day3 = [];
-    const day4 = [];
-    const day5 = [];
+    // タスクを日付ごとにグループ化するためのオブジェクト
+    const taskGroups = {};
+    const dateTaskList = []
 
     // 日付でタスクを分ける
     allTaskList.forEach((task)=> {
-        if(task.start_date === getFormatDay(1)){
-            day1.push(task);
+        const taskDate = task.start_date;
+        
+        if (!taskGroups[taskDate]) {
+            taskGroups[taskDate] = [];
         }
-        else if(task.start_date === getFormatDay(2)){
-            day2.push(task);
-        }
-        else if(task.start_date === getFormatDay(3)){
-            day3.push(task);
-        }
-        else if(task.start_date === getFormatDay(4)){
-            day4.push(task);
-        }
-        else{
-            day5.push(task);
-        }
-    }
-    )
+        taskGroups[taskDate].push(task);
+    });
 
-    return [day1, day2, day3, day4, day5];
+    // 日付ごとにオブジェクトにして配列に格納
+    Object.keys(taskGroups).forEach((date) => {
+        dateTaskList.push({taskDate: date, taskList: taskGroups[date]})
+    })
+
+    // 日付で昇順に並び替え
+    const sortedTaskList = dateTaskList.sort(function(a, b) {
+        return (a.taskDate < b.taskDate) ? -1 : 1;  //オブジェクトの昇順ソート
+    });
+
+    // グループ化した結果を配列に変換して返す
+    return sortedTaskList;
 };

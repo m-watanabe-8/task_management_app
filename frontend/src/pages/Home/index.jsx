@@ -135,9 +135,8 @@ const Home = () => {
                         明日以降のタスク
                     </Typography>
                     <Stack
-                        spacing={2}
                         sx={{
-                            // 画面サイズに応じて動作変更
+                        // 画面サイズに応じて動作変更
                         flexGrow: { xs: 'unset', md: 1 },
                         // 縦並び時の高さ調整
                         minHeight: { xs: 'fit-content', md: 'calc(100vh - 300px)' },
@@ -166,7 +165,7 @@ const Home = () => {
                                     p: 2
                                 }}>
                                     <Typography variant="h7" component="div">
-                                        {formatTodayYM}/{formatTodayDate+index+1}
+                                        {dayTaskList.taskDate}
                                     </Typography>
                                     <Box 
                                     size={12}
@@ -174,7 +173,7 @@ const Home = () => {
                                         maxHeight: 'calc(100vh - 270px)',  
                                         overflowY: 'auto',  
                                     }}>
-                                        {dayTaskList.map((statusTasks, index) => {
+                                        {dayTaskList.taskList.map((statusTasks, index) => {
                                         return(
                                             <TaskAccordion
                                                 key={index} 

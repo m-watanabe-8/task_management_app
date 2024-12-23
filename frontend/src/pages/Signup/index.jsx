@@ -15,7 +15,7 @@ import {
 
 const Signup = (data) => {
     const navigate = useNavigate()
-    const { register, handleSubmit, watch, errors } = useForm();
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
     // サーバのURL
     const url = `${API_USER_URL}user-create/`;
@@ -28,7 +28,7 @@ const Signup = (data) => {
         }
         catch(error){
             if(error)
-            alert(`ユーザーの作成に失敗しました。 ${error.response.request.responseText}`);
+            alert(`ユーザーの作成に失敗しました。 ${error.response.data}`);
         };
     };
 
@@ -50,14 +50,30 @@ return (
                         fullWidth
                         margin="normal"
                         variant="standard"
-                        {...register('username')}
+                        {...register('username',{
+                            required: '内容は必須です',
+                            maxLength: {
+                                value: 20,
+                                message: '最大20文字です'
+                            },
+                        })}
+                        error={!!errors.username}
+                        helperText={errors.username?.message}
                     />
                     <TextField
                         label="メールアドレス"
                         fullWidth
                         margin="normal"
                         variant="standard"
-                        {...register('email')}
+                        type="email"
+                        {...register('email',{
+                            maxLength: {
+                                value: 255,
+                                message: '最大255文字です'
+                            }
+                        })}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
                     />
                     <TextField
                         label="パスワード"
@@ -66,7 +82,15 @@ return (
                         type="password"
                         variant="standard"
                         sx={{mb:3}}
-                        {...register('password', { required: true })} 
+                        {...register('password', {
+                            required: true,
+                            minLength: {
+                                value: 8,
+                                message: '8文字以上の入力が必要です'
+                            }
+                        })} 
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
                     />
                     <Button variant="contained" sx={{backgroundColor: "#05a7be"}} type="submit">新規登録</Button>
                 </form>
