@@ -10,13 +10,25 @@ export function Header() {
         <Box>
             <AppBar position="static" sx={{ backgroundColor: '#087EA2', maxHeight:"64px" }}>
                 <Toolbar>
-                    <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
-                        <Box display={'flex'} flexDirection={'row'}>
+                    <Box sx={{ 
+                            display: 'flex', 
+                            flexGrow: 1,  // 左側のコンテンツが可能な限り広がる
+                            alignItems: 'center'  // 垂直方向の中央揃え
+                        }}>
                             <HeaderMenu />
-                            <img src="./images/logo.png" className="App-logo" alt="logo"  style={{ maxHeight: 40 }}/>
+                            <img 
+                                src="./images/logo.png" 
+                                className="App-logo" 
+                                alt="logo"  
+                                style={{ maxHeight: 40 }}
+                            />
                         </Box>
-                        <HeaderAccount />
-                    </Box>
+                        <Box sx={{ 
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            <HeaderAccount />
+                        </Box>
                 </Toolbar>
             </AppBar>
         </Box>

@@ -1,4 +1,4 @@
-import FaceIcon from '@mui/icons-material/Face';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -29,62 +29,62 @@ export function HeaderAccount() {
         <>
             {auth && (
                 <div>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                >
-                    <FaceIcon />
-                </IconButton>
-                {token === void 0 ? (
-                    <Menu
-                    id="menu-appbar"
-                    sx={{ mt: '45px' }}
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="inherit"
                     >
-                        <MenuItem onClick={handleClose}>
-                            <Button color="inherit" href="/login/">ログイン</Button>
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <Button color="inherit" href="/signup/">新規登録</Button>
-                        </MenuItem>
-                    </Menu>
-                ) : (
-                    <Menu
-                    id="menu-appbar"
-                    sx={{ mt: '45px' }}
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    >
-                        <MenuItem onClick={handleClose}>
-                            <Logout />
-                        </MenuItem>
-                    </Menu>
-                )}
+                        <AccountCircleIcon />
+                    </IconButton>
+                    {token === void 0 ? (
+                        <Menu
+                        id="menu-appbar"
+                        sx={{ mt: '45px' }}
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleClose}>
+                                <Button color="inherit" href="/login/">ログイン</Button>
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <Button color="inherit" href="/signup/">新規登録</Button>
+                            </MenuItem>
+                        </Menu>
+                    ) : (
+                        <Menu
+                        id="menu-appbar"
+                        sx={{ mt: '45px' }}
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleClose}>
+                                <Logout />
+                            </MenuItem>
+                        </Menu>
+                    )}
                 </div>
             )}
         </>

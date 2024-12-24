@@ -24,10 +24,6 @@ const Home = () => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
 
-    const today = new Date();
-    const formatTodayYM = today.getFullYear() + '/' + (today.getMonth()+1);
-    const formatTodayDate = today.getDate();
-
     useEffect(() => {
         if(cookies.accessToken === void 0){
             navigate('/login')
