@@ -17,9 +17,8 @@ export const useMemberTaskList = () => {
 
     // メンバー全員のタスク一覧の取得（明日以降開始）
     const getMemberSpecifiedTaskList = async () => {
-        const formatDayStart = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate()+1);
-        const formatDayEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate()+5);
-        const url = `${API_AUTH_URL}task-search/?search_type=member&specific_date_start=${formatDayStart}&specific_date_end=${formatDayEnd}`;
+        const formatDayStart = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate());
+        const url = `${API_AUTH_URL}task-search/?search_type=member&specific_date_start=${formatDayStart}`;
 
         try {
             const response = await axios.get(url,{

@@ -47,17 +47,14 @@ class TaskListView(APIView):
                 serializer = TaskSerializer(tasks, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             
-            # 本日日付が開始日と終了日の範囲内の全員のデータ
+            # 今日以降の全員のデータ
             elif search_type == 'member':
                 # 指定日を変換
                 specific_date_str_start = request.query_params.get('specific_date_start')
-                specific_date_str_end = request.query_params.get('specific_date_end')
                 specific_date_start = make_aware(datetime.strptime(specific_date_str_start, '%Y-%m-%d'))
-                specific_date_end = make_aware(datetime.strptime(specific_date_str_end, '%Y-%m-%d'))
-
+            
                 tasks = Task.objects.filter(
-                    start_date__lte=specific_date_start,
-                    end_date__gte=specific_date_end,
+                    start_date__gte=specific_date_start,
                     is_done = False
                 )
 
