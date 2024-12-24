@@ -17,7 +17,7 @@ export function Header() {
                         }}>
                             <HeaderMenu />
                             <img 
-                                src="./images/logo.png" 
+                                src="./images/logo.JPG" 
                                 className="App-logo" 
                                 alt="logo"  
                                 style={{ maxHeight: 40 }}
