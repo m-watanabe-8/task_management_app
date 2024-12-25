@@ -29,6 +29,7 @@ export const useMemberTaskList = () => {
             });
             return response.data;
         } catch (error) {
+            alert('メンバーのタスクが取得できませんでした。');
             console.error('メンバーのタスクが取得できませんでした。', error);
             setError(error);
             return [];
@@ -66,6 +67,7 @@ export const useMemberTaskList = () => {
             };
 
         } catch (error) {
+            alert('タスクの取得と振り分けに失敗しました。');
             console.error('タスクの取得と振り分けに失敗しました。', error);
             setError(error);
         } finally {

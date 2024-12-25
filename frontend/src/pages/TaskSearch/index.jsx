@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
-
 import { Box, Stack, Typography } from '@mui/material';
 
 const TaskSearch = () => {
@@ -21,7 +20,7 @@ const TaskSearch = () => {
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
 
-    const [filteredData, setFilteredData] = useState(memberTaskList);
+    const [filteredData, setFilteredData] = useState([]);
 
     // 検索用のフィルタリング関数
     const onSearch = (searchTerm, checkedList) => {
@@ -46,16 +45,18 @@ const TaskSearch = () => {
         }
     };
 
+    // 取得時にセットする
     useEffect(() => {
-        if(cookies.accessToken === void 0){
+        setFilteredData(memberTaskList);
+    }, [memberTaskList]);
+
+
+    useEffect(() => {
+        if(!cookies.accessToken){
             navigate('/login')
         }
         getMemberTaskList();
-    },[getMemberTaskList]);
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    },[cookies,navigate]);
 
     return (
         <>

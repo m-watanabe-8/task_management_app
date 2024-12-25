@@ -28,6 +28,7 @@ export const useTaskList = () => {
             });
             return response.data;
         } catch (error) {
+            alert('本日日付のタスクが取得できませんでした。');
             console.error('本日日付のタスクが取得できませんでした。', error);
             setError(error);
             return [];
@@ -49,6 +50,7 @@ export const useTaskList = () => {
             });
             return response.data;
         } catch (error) {
+            alert('明日以降のタスクが取得できませんでした。');
             console.error('明日以降のタスクが取得できませんでした。', error);
             setError(error);
             return [];
@@ -97,6 +99,7 @@ export const useTaskList = () => {
             }
 
         } catch (error) {
+            alert('タスクの取得と振り分けに失敗しました。');
             console.error('タスクの取得と振り分けに失敗しました。', error);
             setError(error);
         } finally {

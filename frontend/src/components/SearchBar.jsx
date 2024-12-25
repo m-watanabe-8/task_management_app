@@ -41,7 +41,7 @@ export function SearchBar({ onSearch, memberList }) {
                 isChecked: true
             }))
         );
-    },[]);
+    },[memberList]);
 
 
     // 親チェックボックスの状態管理

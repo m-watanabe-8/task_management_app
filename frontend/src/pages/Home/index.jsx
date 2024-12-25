@@ -2,7 +2,7 @@ import { CreatingTaskButton } from "components/Button/CreatingTaskButton";
 import { Header } from "components/Header/Header";
 import { TaskAccordion } from "components/TaskAccordion";
 import { useTaskList } from 'hooks/useTaskList';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,17 +23,15 @@ const Home = () => {
 
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
+    const [progress, setProgress] = useState(false);
 
     useEffect(() => {
         if(cookies.accessToken === void 0){
             navigate('/login')
         }
         getTaskList()
-    },[getTaskList]);
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    },[getTaskList,cookies.accessToken]);
+    
 
     return (
         <>
@@ -60,7 +58,7 @@ const Home = () => {
                 }}
             >
                 {/* 今日のタスク */}
-                <Grid item 
+                <Grid 
                 size={{ xs: 12, md: 6 }}
                 sx={{ 
                     height: { xs: 'auto', md: 'calc(100vh - 100px)' },
@@ -87,7 +85,7 @@ const Home = () => {
                         }}
                     >
                         {/* ステータスごと */}
-                            <Grid item 
+                            <Grid  
                             size={7} 
                             sx={{
                                 maxHeight: 'calc(100vh - 240px)',  
@@ -105,7 +103,7 @@ const Home = () => {
                                 })}
                             </Grid>
                             {/* 完了 */}
-                            <Grid item 
+                            <Grid  
                             size={5}
                             sx={{
                                 maxHeight: 'calc(100vh - 240px)',  
@@ -121,7 +119,7 @@ const Home = () => {
                     </Grid>
                 </Grid>
                 {/* 明日以降のタスク */}
-                <Grid item 
+                <Grid  
                     size={{ xs: 12, md: 6 }}
                     sx={{ 
                         height: { xs: 'auto', md: 'calc(100vh - 100px)' },

@@ -23,7 +23,7 @@ const ErrorPage = () => {
         <Typography variant="h5" gutterBottom>
             お探しのページは見つかりませんでした。
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1">
             入力した URL が正しいか、もう一度確認してください。<br />
             または、ホームページに戻ることができます。
         </Typography>
