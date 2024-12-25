@@ -4,6 +4,7 @@ import { API_USER_URL } from "configs/ApiRouteUrl";
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
     Button,
     Card,
@@ -92,7 +93,10 @@ return (
                         error={!!errors.password}
                         helperText={errors.password?.message}
                     />
-                    <Button variant="contained" sx={{backgroundColor: "#05a7be"}} type="submit">新規登録</Button>
+                    <Button variant="contained" sx={{backgroundColor: "#05a7be", mb:1}} type="submit">新規登録</Button>
+                    <div>
+                        <Button href="/login" endIcon={<KeyboardArrowRightIcon />}>ログインはこちら</Button>
+                    </div>
                 </form>
             </CardContent>
         </Card>

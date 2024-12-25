@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { Header } from "../../components/Header/Header";
 
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
     Button,
     Card,
@@ -106,7 +107,10 @@ return (
                             sx={{ mb: 3 }}
                             {...register('password', { required: true })} 
                         />
-                        <Button variant="contained" sx={{backgroundColor: "#05a7be"}} type="submit">ログイン</Button>
+                        <Button variant="contained" sx={{backgroundColor: "#05a7be", mb:1}} type="submit">ログイン</Button>
+                        <div>
+                            <Button href="/signup" endIcon={<KeyboardArrowRightIcon />}>新規登録はこちら</Button>
+                        </div>
                     </form>
                 </CardContent>
             </Card>

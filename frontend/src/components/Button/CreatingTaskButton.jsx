@@ -20,10 +20,10 @@ export function CreatingTaskButton({ onTaskUpdate }) {
     <>
         <Button 
         variant="contained" 
+        startIcon={<AddIcon fontSize='medium'/>}
         sx={{backgroundColor: "#05a7be"}} 
         onClick={() => handleOpen({})}
         >
-            <AddIcon fontSize='medium'/>
             新規作成
         </Button>
         <RegisterDialog 
