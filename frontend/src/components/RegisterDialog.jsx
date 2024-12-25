@@ -2,7 +2,7 @@ import axios from 'axios';
 import { DeleteDialog } from "components/DeleteDialog";
 import { API_AUTH_URL } from "configs/ApiRouteUrl";
 import dayjs from 'dayjs';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from 'react-cookie';
 import { Controller, useForm } from "react-hook-form";
 
@@ -31,13 +31,39 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
     // サーバのURL
     const url = `${API_AUTH_URL}task/`;
 
-    const { register,handleSubmit,getValues,control,formState: { errors }, reset } = useForm()
-
+    const { register,handleSubmit,getValues,setValue,control,formState: { errors }, reset } = useForm()
     const [cookies, setCookie, removeCookie] = useCookies();
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [openDel, setOpenDel] = useState(false);
     const userId = cookies.userId
+
+    // ダイアログが開かれるたびにフォームをリセット
+    useEffect(() => {
+        if (open) {
+            if (Object.keys(task).length > 0) {
+                // 編集時の初期値設定
+                setValue('title', task.title || '');
+                setValue('content', task.content || '');
+                setValue('start_date', dayjs(task.start_date));
+                setValue('end_date', dayjs(task.end_date));
+                setValue('category', task.category || 'work');
+                setValue('status', task.status || 'todo');
+                setValue('is_done', task.is_done || false);
+            } else {
+                // 新規作成時はフォームをリセット
+                reset({
+                    title: '',
+                    content: '',
+                    start_date: dayjs(),
+                    end_date: dayjs(),
+                    category: 'work',
+                    status: 'todo',
+                    is_done: false
+                });
+            }
+        }
+    }, [open, task, setValue, reset]);
 
 
     // タスク登録
@@ -59,9 +85,6 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                         'Authorization': `JWT ${cookies.accessToken}`
                     }
                 });
-                await onTaskUpdate();  // タスクの作成/更新後にリストを更新
-                handleClose();
-                reset();    // 編集内容をリセット
             } else {
                 // 更新
                 await axios.patch(`${url}${task.id}/`, data, {
@@ -70,9 +93,9 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                         'Authorization': `JWT ${cookies.accessToken}`
                     }
                 });
-                await onTaskUpdate();
-                handleClose();
             }
+            await onTaskUpdate();  // タスクの作成/更新後にリストを更新
+            handleDialogClose();
         } catch (error) {
             alert('操作に失敗しました。');
             console.log(error)
@@ -98,7 +121,7 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
     }
 
     // キャンセルボタンかダイアログ外をクリックした時の処理
-    const clickClose = () => {
+    const handleDialogClose = () => {
         handleClose();
         // 編集内容をリセット
         reset();
@@ -112,13 +135,15 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
         setOpenDel(false)
     }
 
+    
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['DatePicker']}>
             <Dialog
                 open={open}
-                onClose={clickClose}
+                onClose={handleDialogClose}
             >
                 <DialogTitle>{Object.keys(task).length === 0 ? "タスクの作成" : "タスクの編集"}</DialogTitle>
                 <DialogContent>
@@ -263,12 +288,11 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                                 <Controller
                                     name="is_done" 
                                     control={control} 
-                                    defaultValue={task.is_done}
+                                    defaultValue={task.is_done || false}
                                     render={({ field }) => (
                                         <FormControlLabel
                                             control={<Checkbox {...field} checked={field.value} />}
                                             label="完了"
-                                            disabled={!(task.user === userId || isNew)}
                                         />
                                     )}
                                 />
@@ -286,7 +310,7 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                             <Button variant="contained" sx={{backgroundColor: "#05a7be"}} onClick={handleSubmit(onSubmit)}>登録</Button>
                         ) : null
                     }
-                    <Button variant="contained" sx={{backgroundColor: "#8c9cb2"}} onClick={clickClose} >キャンセル</Button>
+                    <Button variant="contained" sx={{backgroundColor: "#8c9cb2"}} onClick={handleDialogClose} >キャンセル</Button>
                 </DialogActions>
             </Dialog>
             <DeleteDialog
