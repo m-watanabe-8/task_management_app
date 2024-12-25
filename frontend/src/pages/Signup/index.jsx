@@ -29,7 +29,7 @@ const Signup = (data) => {
         }
         catch(error){
             if(error)
-            alert(`ユーザーの作成に失敗しました。 ${error.response.data}`);
+            alert('ユーザーの作成に失敗しました。');
         };
     };
 
