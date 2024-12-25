@@ -59,6 +59,9 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                         'Authorization': `JWT ${cookies.accessToken}`
                     }
                 });
+                await onTaskUpdate();  // タスクの作成/更新後にリストを更新
+                handleClose();
+                reset();    // 編集内容をリセット
             } else {
                 // 更新
                 await axios.patch(`${url}${task.id}/`, data, {
@@ -67,9 +70,9 @@ export function RegisterDialog({open, handleClose, task, onTaskUpdate, isNew}) {
                         'Authorization': `JWT ${cookies.accessToken}`
                     }
                 });
+                await onTaskUpdate();
+                handleClose();
             }
-            await onTaskUpdate();  // タスクの作成/更新後にリストを更新
-            handleClose();
         } catch (error) {
             alert('操作に失敗しました。');
             console.log(error)
