@@ -17,10 +17,10 @@ export function Header() {
                         }}>
                             <HeaderMenu />
                             <img 
-                                src="./images/logo.JPG" 
+                                src="./images/logo.png" 
                                 className="App-logo" 
                                 alt="logo"  
-                                style={{ maxHeight: 40 }}
+                                style={{ maxHeight: 40, objectFit: 'contain' }}
                             />
                         </Box>
                         <Box sx={{ 
