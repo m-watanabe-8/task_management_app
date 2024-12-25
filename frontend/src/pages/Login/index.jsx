@@ -64,7 +64,7 @@ const Login = () => {
 
             navigate('/');      // 指定したパスに遷移
         } catch(error){
-            alert("メールアドレスかパスワードが違います");
+            alert('メールアドレスまたはパスワードが間違っています。\n再度ご確認ください。');
             console.log(error)
         };
     };
