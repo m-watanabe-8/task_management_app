@@ -2,7 +2,7 @@ import { CreatingTaskButton } from "components/Button/CreatingTaskButton";
 import { Header } from "components/Header/Header";
 import { TaskAccordion } from "components/TaskAccordion";
 import { useTaskList } from 'hooks/useTaskList';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,18 +15,19 @@ const Home = () => {
         todayStatusTasks,
         doneTasks,
         specifiedTasks,
-        isLoading,
-        error,
         getTaskList,
-        refreshTaskList
+        refreshTaskList,
+        getTokenExpiration,
     } = useTaskList();
 
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
-    const [progress, setProgress] = useState(false);
 
     useEffect(() => {
-        if(cookies.accessToken === void 0){
+        // トークンの有効期限を取得
+        const tokenExp = getTokenExpiration();
+        const now = new Date();
+        if(cookies.accessToken === void 0 || (tokenExp && tokenExp < now)){
             navigate('/login')
         }
         getTaskList()

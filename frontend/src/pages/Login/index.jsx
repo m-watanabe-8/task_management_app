@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_USER_URL } from "configs/ApiRouteUrl";
+import { useTaskList } from 'hooks/useTaskList';
 import { useCookies } from 'react-cookie';
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +19,7 @@ import { useEffect } from 'react';
 
 
 const Login = () => {
+    const { getTokenExpiration } = useTaskList();
     const navigate = useNavigate()
     const [cookies, setCookie, removeCookie] = useCookies();
     const { register, handleSubmit, watch, errors } = useForm();
@@ -70,7 +72,10 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if(cookies.accessToken !== void 0){
+        // トークンの有効期限を取得
+        const tokenExp = getTokenExpiration();
+        const now = new Date();
+        if(cookies.accessToken !== void 0 && (tokenExp && tokenExp >= now)){
             navigate('/')
         }
     },[])

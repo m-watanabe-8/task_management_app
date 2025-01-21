@@ -2,6 +2,7 @@ import { Header } from "components/Header/Header";
 import { SearchBar } from "components/SearchBar";
 import { TaskAccordion } from "components/TaskAccordion";
 import { useMemberTaskList } from 'hooks/useMemberTaskList';
+import { useTaskList } from 'hooks/useTaskList';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ const TaskSearch = () => {
         getMemberTaskList,
         refreshTaskList
     } = useMemberTaskList();
+    const { getTokenExpiration } = useTaskList();
     const [cookies, setCookie, removeCookie] = useCookies();
     const navigate = useNavigate()
 
@@ -50,13 +52,16 @@ const TaskSearch = () => {
         setFilteredData(memberTaskList);
     }, [memberTaskList]);
 
-
     useEffect(() => {
-        if(!cookies.accessToken){
+        // トークンの有効期限を取得
+        const tokenExp = getTokenExpiration();
+        const now = new Date();
+        console.log(cookies.accessToken)
+        if(cookies.accessToken === void 0 || (tokenExp && tokenExp < now)){
             navigate('/login')
         }
-        getMemberTaskList();
-    },[cookies,navigate]);
+        getMemberTaskList()
+    },[getMemberTaskList,cookies.accessToken]);
 
     return (
         <>

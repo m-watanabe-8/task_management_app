@@ -26,7 +26,7 @@ export function TaskAccordion({taskList, statusName, onTaskUpdate}) {
     
     return (
         <Accordion 
-        defaultExpanded 
+        defaultExpanded //= {taskList.length === 0 ? false : true}
         square 
         sx={{
             '--Grid-borderWidth': '1px',

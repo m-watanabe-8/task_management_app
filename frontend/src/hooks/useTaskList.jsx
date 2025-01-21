@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_AUTH_URL } from "configs/ApiRouteUrl";
+import { jwtDecode } from 'jwt-decode';
 import { useCallback, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { getDayTaskList } from "utils/getDayTaskList";
@@ -14,6 +15,20 @@ export const useTaskList = () => {
     const [specifiedTasks, setSpecifiedTasks] = useState([]);       // 日付別ステータスで分割したタスクリスト（明日以降）
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // トークンの有効期限を取得する関数
+    const getTokenExpiration = () => {
+        if(!cookies.accessToken){
+            return null;
+        }
+        try{
+            const decodedToken = jwtDecode(cookies.accessToken);
+            return decodedToken.exp ? new Date(decodedToken.exp * 1000) : null;
+        }catch(error){
+            console.error('トークンのデコードに失敗しました。',error);
+            return null;
+        }
+    }
 
     // タスク一覧の取得（今日）
     const getTodayTaskList = async () => {
@@ -119,6 +134,7 @@ export const useTaskList = () => {
         isLoading,
         error,
         getTaskList,
-        refreshTaskList
+        refreshTaskList,
+        getTokenExpiration,
     };
 };
